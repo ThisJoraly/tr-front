@@ -1,25 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import CarTable from './components/CarTable';
+import CargoTable from './components/CargoTable';
+import ClientTable from './components/ClientTable';
+import OrderTable from './components/OrderTable';
+import ReportForm from './components/ReportForm';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Router>
+            <div className="container">
+                <Navbar />
+                <Routes>
+                    <Route path="/cars" element={<CarTable />} />
+                    <Route path="/cargos" element={<CargoTable />} />
+                    <Route path="/clients" element={<ClientTable />} />
+                    <Route path="/orders" element={<OrderTable />} />
+                    <Route path="/reports" element={<ReportForm />} />
+                </Routes>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
