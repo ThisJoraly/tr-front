@@ -8,6 +8,7 @@ const CargoTable = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedCargo, setSelectedCargo] = useState(null);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     useEffect(() => {
         api.get('/cargos').then(response => {
@@ -40,6 +41,27 @@ const CargoTable = () => {
         }
     };
 
+    const handleSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedCargos = [...cargos].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+        if (aValue < bValue) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+    });
+
     return (
         <div className="container mt-4">
             <h2>Грузы</h2>
@@ -48,17 +70,21 @@ const CargoTable = () => {
                 <thead>
                 <tr>
                     <th>Тип груза</th>
-                    <th>Вес груза</th>
-                    <th>Объём груза</th>
+                    <th onClick={() => handleSort('cargoWeight')} style={{ cursor: 'pointer' }}>
+                        Вес груза {sortConfig.key === 'cargoWeight' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                    </th>
+                    <th onClick={() => handleSort('cargoVolume')} style={{ cursor: 'pointer' }}>
+                        Объем груза {sortConfig.key === 'cargoVolume' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                    </th>
                     <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
-                {cargos.map(cargo => (
+                {sortedCargos.map(cargo => (
                     <tr key={cargo.cargoId}>
                         <td>{cargo.cargoType}</td>
-                        <td>{cargo.cargoWeight}</td>
-                        <td>{cargo.cargoVolume}</td>
+                        <td>{cargo.cargoWeight} кг</td>
+                        <td>{cargo.cargoVolume} м³</td>
                         <td>
                             <button className="btn btn-primary btn-sm" onClick={() => handleEdit(cargo)}>Изм.</button>
                             <button className="btn btn-danger btn-sm" onClick={() => handleDelete(cargo.cargoId)}>Удал.</button>

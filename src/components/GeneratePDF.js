@@ -1,50 +1,78 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import timesnrcyrmt from '../services/timesnrcyrmt.ttf'; // Путь к вашему шрифту
+import { Chart } from 'chart.js/auto';
 
-const GeneratePDF = ({ cars, drivers, startDate, endDate }) => {
-    const generate = async () => {
+const GeneratePDF = ({ orders, startDate, endDate }) => {
+    const chartRef = useRef(null);
+    const chartInstance = useRef(null);
+
+    useEffect(() => {
+        if (chartRef.current) {
+            const ctx = chartRef.current.getContext('2d');
+
+            // Уничтожение старого графика, если он существует
+            if (chartInstance.current) {
+                chartInstance.current.destroy();
+            }
+
+            // Фильтрация данных по дате
+            const filteredOrders = orders.filter(order => {
+                const orderDate = new Date(order.orderDispatchDate);
+                return orderDate >= new Date(startDate) && orderDate <= new Date(endDate);
+            });
+
+            // Группировка данных по дате
+            const groupedOrders = filteredOrders.reduce((acc, order) => {
+                const date = new Date(order.orderDispatchDate).toLocaleDateString('ru-RU');
+                if (!acc[date]) {
+                    acc[date] = 0;
+                }
+                acc[date]++;
+                return acc;
+            }, {});
+
+            const labels = Object.keys(groupedOrders);
+            const data = Object.values(groupedOrders);
+
+            chartInstance.current = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Отправки заказов',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    }, [orders, startDate, endDate]);
+
+    const generate = () => {
         const doc = new jsPDF();
 
-        // Добавляем шрифт
-        doc.addFileToVFS('timesnrcyrmt.ttf', timesnrcyrmt);
-        doc.addFont('timesnrcyrmt.ttf', 'Times New Roman', 'normal');
+        // Добавление графика в PDF
+        const imgData = chartRef.current.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 15, 40, 180, 160);
 
-        doc.setFont('Times New Roman');
-        doc.setFontSize(12);
-        doc.text('Transport company Report', 14, 22);
-
-        // Добавляем таблицу
-        const tableColumn = ["Car Number", "Car Model", "Car Brand", "Car Capacity", "Car Mileage", "Car Condition", "Last Maintenance Date", "Driver ID"];
-        const tableRows = [];
-
-        cars.forEach(car => {
-            const carData = [
-                car.carNumber,
-                car.carModel,
-                car.carBrand,
-                car.carCapacity,
-                car.carMileage,
-                car.carCondition,
-                new Date(car.carLastMaintenanceDate).toLocaleDateString('ru-RU'),
-                car.driverId
-            ];
-            tableRows.push(carData);
-        });
-
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 30
-        });
-
-        // Сохраняем PDF
+        // Сохранение PDF
         doc.save(`report_${startDate}_to_${endDate}.pdf`);
     };
 
     return (
-        <button className="btn btn-primary" onClick={generate}>Generate PDF</button>
+        <div>
+            <canvas ref={chartRef} width="600" height="400"></canvas>
+            <button className="btn btn-primary" onClick={generate}>Создать PDF</button>
+        </div>
     );
 };
 

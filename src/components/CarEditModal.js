@@ -46,36 +46,36 @@ const CarEditModal = ({ show, onHide, car, onSave }) => {
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
-                <Modal.Title>Edit Car</Modal.Title>
+                <Modal.Title>Изменить авто</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
                     <Form.Group controlId="carNumber">
-                        <Form.Label>Car Number</Form.Label>
+                        <Form.Label>Номер машины</Form.Label>
                         <Form.Control type="text" name="carNumber" value={formData.carNumber} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="carModel">
-                        <Form.Label>Car Model</Form.Label>
+                        <Form.Label>Модель</Form.Label>
                         <Form.Control type="text" name="carModel" value={formData.carModel} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="carBrand">
-                        <Form.Label>Car Brand</Form.Label>
+                        <Form.Label>Производитель</Form.Label>
                         <Form.Control type="text" name="carBrand" value={formData.carBrand} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="carCapacity">
-                        <Form.Label>Car Capacity</Form.Label>
+                        <Form.Label>Грузоподъёмность</Form.Label>
                         <Form.Control type="number" name="carCapacity" value={formData.carCapacity} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="carMileage">
-                        <Form.Label>Car Mileage</Form.Label>
+                        <Form.Label>Пробег</Form.Label>
                         <Form.Control type="number" name="carMileage" value={formData.carMileage} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="carCondition">
-                        <Form.Label>Car Condition</Form.Label>
+                        <Form.Label>Состояние</Form.Label>
                         <Form.Control type="text" name="carCondition" value={formData.carCondition} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="driverId">
-                        <Form.Label>Driver</Form.Label>
+                        <Form.Label>Водитель</Form.Label>
                         <Form.Control as="select" name="driverId" value={formData.driverId} onChange={handleChange} required>
                             {drivers.map(driver => (
                                 <option key={driver.driverId} value={driver.driverId}>
@@ -85,13 +85,13 @@ const CarEditModal = ({ show, onHide, car, onSave }) => {
                         </Form.Control>
                     </Form.Group>
                     <Button variant="primary" type="submit">
-                        Save
+                        Сохранить
                     </Button>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>
-                    Close
+                    Закрыть
                 </Button>
             </Modal.Footer>
         </Modal>

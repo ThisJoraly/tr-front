@@ -10,8 +10,9 @@ import ReportForm from './components/ReportForm';
 function App() {
     return (
         <Router>
+            <Navbar />
             <div className="container">
-                <Navbar />
+
                 <Routes>
                     <Route path="/cars" element={<CarTable />} />
                     <Route path="/cargos" element={<CargoTable />} />

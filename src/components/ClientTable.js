@@ -8,6 +8,7 @@ const ClientTable = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     useEffect(() => {
         api.get('/clients').then(response => {
@@ -40,6 +41,27 @@ const ClientTable = () => {
         }
     };
 
+    const handleSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedClients = [...clients].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+        if (aValue < bValue) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+    });
+
     return (
         <div className="container mt-4">
             <h2>Клиенты</h2>
@@ -51,12 +73,14 @@ const ClientTable = () => {
                     <th>Номер телефона</th>
                     <th>Эл. почта</th>
                     <th>Адрес</th>
-                    <th>Тип клиента</th>
+                    <th onClick={() => handleSort('clientType')} style={{ cursor: 'pointer' }}>
+                        Тип клиента {sortConfig.key === 'clientType' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                    </th>
                     <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
-                {clients.map(client => (
+                {sortedClients.map(client => (
                     <tr key={client.clientId}>
                         <td>{client.clientName}</td>
                         <td>{client.clientPhone}</td>

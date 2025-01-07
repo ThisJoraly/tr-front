@@ -32,34 +32,34 @@ const CargoAddModal = ({ show, onHide, onSave }) => {
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
-                <Modal.Title>Add New Cargo</Modal.Title>
+                <Modal.Title>Добавить новый груз</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
                     <Form.Group controlId="cargoType">
-                        <Form.Label>Cargo Type</Form.Label>
+                        <Form.Label>Тип груза</Form.Label>
                         <Form.Control type="text" name="cargoType" value={formData.cargoType} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="cargoWeight">
-                        <Form.Label>Cargo Weight</Form.Label>
+                        <Form.Label>Вес</Form.Label>
                         <Form.Control type="number" name="cargoWeight" value={formData.cargoWeight} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="cargoVolume">
-                        <Form.Label>Cargo Volume</Form.Label>
+                        <Form.Label>Объём</Form.Label>
                         <Form.Control type="number" name="cargoVolume" value={formData.cargoVolume} onChange={handleChange} required />
                     </Form.Group>
                     <Form.Group controlId="orderId">
-                        <Form.Label>Order ID</Form.Label>
+                        <Form.Label>ID заказа</Form.Label>
                         <Form.Control type="text" name="orderId" value={formData.orderId} onChange={handleChange} required />
                     </Form.Group>
                     <Button variant="primary" type="submit">
-                        Save
+                        Сохранить
                     </Button>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>
-                    Close
+                    Закрыть
                 </Button>
             </Modal.Footer>
         </Modal>

@@ -12,7 +12,11 @@ code {
     monospace;
 }
 
-/*iframe*/
-/*{*/
-/*  display: none;*/
-/*}*/
+button {
+  margin: 15px;
+}
+
+iframe
+{
+  display: none;
+}

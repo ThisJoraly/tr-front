@@ -8,6 +8,7 @@ const CarTable = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedCar, setSelectedCar] = useState(null);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     useEffect(() => {
         api.get('/cars').then(response => {
@@ -40,6 +41,27 @@ const CarTable = () => {
         }
     };
 
+    const handleSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedCars = [...cars].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+        if (aValue < bValue) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+    });
+
     return (
         <div className="container mt-4">
             <h2>Автомобили</h2>
@@ -50,20 +72,24 @@ const CarTable = () => {
                     <th>Номер авто</th>
                     <th>Модель авто</th>
                     <th>Производитель</th>
-                    <th>Грузоподъёмность</th>
-                    <th>Пробег</th>
+                    <th onClick={() => handleSort('carCapacity')} style={{ cursor: 'pointer' }}>
+                        Грузоподъемность {sortConfig.key === 'carCapacity' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                    </th>
+                    <th onClick={() => handleSort('carMileage')} style={{ cursor: 'pointer' }}>
+                        Пробег {sortConfig.key === 'carMileage' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                    </th>
                     <th>Состояние</th>
                     <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
-                {cars.map(car => (
+                {sortedCars.map(car => (
                     <tr key={car.carId}>
                         <td>{car.carNumber}</td>
                         <td>{car.carModel}</td>
                         <td>{car.carBrand}</td>
-                        <td>{car.carCapacity} кг</td>
-                        <td>{car.carMileage}</td>
+                        <td>{car.carCapacity} тонн</td>
+                        <td>{car.carMileage} км</td>
                         <td>{car.carCondition}</td>
                         <td>
                             <button className="btn btn-primary btn-sm" onClick={() => handleEdit(car)}>Изм.</button>

@@ -8,6 +8,7 @@ const OrderTable = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     useEffect(() => {
         api.get('/orders').then(response => {
@@ -40,6 +41,27 @@ const OrderTable = () => {
         }
     };
 
+    const handleSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedOrders = [...orders].sort((a, b) => {
+        if (!sortConfig.key) return 0;
+        const aValue = new Date(a[sortConfig.key]);
+        const bValue = new Date(b[sortConfig.key]);
+        if (aValue < bValue) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+    });
+
     return (
         <div className="container mt-4">
             <h2>Заказы</h2>
@@ -51,14 +73,18 @@ const OrderTable = () => {
                     <th>Оператор</th>
                     <th>Стартовая точка</th>
                     <th>Конечная точка</th>
-                    <th>Отправка</th>
-                    <th>Доставка</th>
+                    <th onClick={() => handleSort('orderDispatchDate')} style={{ cursor: 'pointer' }}>
+                        Отправка {sortConfig.key === 'orderDispatchDate' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                    </th>
+                    <th onClick={() => handleSort('orderDeliveryDate')} style={{ cursor: 'pointer' }}>
+                        Доставка {sortConfig.key === 'orderDeliveryDate' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
+                    </th>
                     <th>Статус</th>
                     <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
-                {orders.map(order => (
+                {sortedOrders.map(order => (
                     <tr key={order.orderId}>
                         <td>{order.clientName}</td>
                         <td>{order.operatorName}</td>
